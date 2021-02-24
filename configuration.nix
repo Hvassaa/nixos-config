@@ -1,3 +1,4 @@
+
 # Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 { config, pkgs, ... }:
@@ -61,12 +62,15 @@ in
     # cpu stuff    
     enableRedistributableFirmware = true;
     cpu.intel.updateMicrocode = true;
-    opengl.extraPackages = with pkgs; [
-      vaapiIntel
-      vaapiVdpau
-      libvdpau-va-gl
-      intel-media-driver
-    ];
+    opengl = {
+      enable = true;
+      extraPackages = with pkgs; [
+        vaapiIntel
+        vaapiVdpau
+        libvdpau-va-gl
+        intel-media-driver
+      ];
+    };
   };
 
   # enable nvidia
@@ -84,24 +88,24 @@ in
     #powerManagement.enable = true;
   };
 
-boot.extraModprobeConfig = "options nvidia \"NVreg_DynamicPowerManagement=0x02\"\n";
+  boot.extraModprobeConfig = "options nvidia \"NVreg_DynamicPowerManagement=0x02\"\n";
   services.udev.extraRules = ''
-  # Remove NVIDIA USB xHCI Host Controller devices, if present
-  ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{remove}="1"
-  
-  # Remove NVIDIA USB Type-C UCSI devices, if present
-  ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{remove}="1"
-  
-  # Remove NVIDIA Audio devices, if present
-  ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{remove}="1"
-  
-  # Enable runtime PM for NVIDIA VGA/3D controller devices on driver bind
-  ACTION=="bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="auto"
-  ACTION=="bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="auto"
-  
-  # Disable runtime PM for NVIDIA VGA/3D controller devices on driver unbind
-  ACTION=="unbind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="on"
-  ACTION=="unbind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="on"
+    # Remove NVIDIA USB xHCI Host Controller devices, if present
+    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c0330", ATTR{remove}="1"
+    
+    # Remove NVIDIA USB Type-C UCSI devices, if present
+    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x0c8000", ATTR{remove}="1"
+    
+    # Remove NVIDIA Audio devices, if present
+    ACTION=="add", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x040300", ATTR{remove}="1"
+    
+    # Enable runtime PM for NVIDIA VGA/3D controller devices on driver bind
+    ACTION=="bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="auto"
+    ACTION=="bind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="auto"
+    
+    # Disable runtime PM for NVIDIA VGA/3D controller devices on driver unbind
+    ACTION=="unbind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030000", TEST=="power/control", ATTR{power/control}="on"
+    ACTION=="unbind", SUBSYSTEM=="pci", ATTR{vendor}=="0x10de", ATTR{class}=="0x030200", TEST=="power/control", ATTR{power/control}="on"
   '';  
 
   # Enable sound.
@@ -112,29 +116,20 @@ boot.extraModprobeConfig = "options nvidia \"NVreg_DynamicPowerManagement=0x02\"
   users.users.rasmus = {
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" "video" ]; 
+    shell = pkgs.fish;
+  };
+  programs.fish = {
+    enable = true;
+    interactiveShellInit = ''
+      fish_vi_key_bindings
+      set fish_cursor_insert line
+    '';
   };
 
-  environment = {
-    variables = {
+
+  environment.variables = {
       VISUAL = "nvim";
       EDITOR = "nvim";
-    };
-    etc."inputrc".text = ''
-      set editing-mode vi
-      set show-mode-in-prompt on
-      $if term=linux
-      set vi-ins-mode-string \1\e[?0c\2
-      set vi-cmd-mode-string \1\e[?8c\2
-      $else
-      set vi-ins-mode-string \1\e[6 q\2
-      set vi-cmd-mode-string \1\e[2 q\2
-      $endif
-      
-      set keymap vi-command
-      Control-l: clear-screen
-      set keymap vi-insert
-      Control-l: clear-screen
-    '';
   };
 
   # List packages installed in system profile. To search, run:
@@ -151,6 +146,15 @@ boot.extraModprobeConfig = "options nvidia \"NVreg_DynamicPowerManagement=0x02\"
     curl
     powertop
     ntfs3g
+    gnome3.shotwell
+
+    # programming
+    python-package
+    gcc
+    rustc
+    cargo
+    rust-analyzer
+    rustfmt
     
     # productive stuff
     texlive.combined.scheme-full
@@ -159,11 +163,11 @@ boot.extraModprobeConfig = "options nvidia \"NVreg_DynamicPowerManagement=0x02\"
     # gaming stuff
     discord
     gzdoom
-    python-package
-
+    obs-studio
 
     # nvida, graphic utils
-    nvidia-offload
+    (nvidia-offload.offload)
+    (nvidia-offload.status)
     pciutils
     glxinfo
     mesa-demos
@@ -181,6 +185,7 @@ boot.extraModprobeConfig = "options nvidia \"NVreg_DynamicPowerManagement=0x02\"
       enable = true;
       settings = {
         RUNTIME_PM_DRIVER_BLACKLIST = "nouveau mei_me";
+        RUNTIME_PM_ON_AC = "auto";
       };
     };
     fstrim.enable = true;
@@ -188,4 +193,3 @@ boot.extraModprobeConfig = "options nvidia \"NVreg_DynamicPowerManagement=0x02\"
   
   system.stateVersion = "20.09";
 }
-
