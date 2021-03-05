@@ -7,6 +7,7 @@
 let
   nvidia-offload = import ./nvidia-offload.nix pkgs;
   python-package = import ./custom-python.nix pkgs;
+  touchegg_package = import ./touchegg.nix pkgs;
 in
 {
   imports =
@@ -115,12 +116,13 @@ in
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.rasmus = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "video" ]; 
+    extraGroups = [ "wheel" "networkmanager" "video" "input" ]; 
     shell = pkgs.fish;
   };
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
+      set fish_greeting
       fish_vi_key_bindings
       set fish_cursor_insert line
     '';
@@ -147,6 +149,7 @@ in
     powertop
     ntfs3g
     gnome3.shotwell
+    touchegg_package
 
     # programming
     python-package
