@@ -7,13 +7,26 @@
 let
   nvidia-offload = import ./nvidia-offload.nix pkgs;
   python-package = import ./custom-python.nix pkgs;
-  touchegg_package = import ./touchegg.nix pkgs;
+  # TODO
+  # touchegg_package = import ./touchegg.nix pkgs;
 in
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      # TODO
+      ./touchegg-service.nix
     ];
+
+  # TODO try to get this included in upstream nixpks!!!
+  # override nixpkgs with up-to-date touchegg
+  # nixpkgs.config = {
+  #   packageOverrides = super: let self = super.pkgs; in {
+  #     touchegg = touchegg_package;
+  #   };
+  # (TODO) enable the customized service
+  # };
+  services.touchegg.enable = true;
 
   # enable non-free software
   nixpkgs.config.allowUnfree = true;
@@ -149,7 +162,6 @@ in
     powertop
     ntfs3g
     gnome3.shotwell
-    touchegg_package
 
     # programming
     python-package
@@ -175,6 +187,8 @@ in
     glxinfo
     mesa-demos
   ];
+
+  # systemd.packages = [ touchegg_package ];
 
   # enable steam
   programs.steam.enable = true;

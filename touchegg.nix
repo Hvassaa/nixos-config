@@ -11,6 +11,8 @@ stdenv.mkDerivation rec {
     sha256 = "312a7eacf60e6aa25d900aa95593bcc7981142cebbe12919328f6e0f228702d1";
   };
 
+  PKG_CONFIG_SYSTEMD_SYSTEMDSYSTEMUNITDIR = "${placeholder "out"}/lib/systemd/system";
+
   nativeBuildInputs = [ 
     gcc 
     pkg-config
