@@ -165,11 +165,12 @@ in
 
     # programming
     python-package
-    gcc
-    rustc
-    cargo
-    rust-analyzer
-    rustfmt
+    go
+    # gcc
+    # rustc
+    # cargo
+    # rust-analyzer
+    # rustfmt
     
     # productive stuff
     texlive.combined.scheme-full
