@@ -1,23 +1,22 @@
 # with (import <nixpkgs> {});
-pkgs:
-with pkgs;
+# pkgs:
+# with pkgs;
+{ pkgs, stdenv, fetchFromGitHub, systemd, libinput, pugixml, cairo, xorg, gtk3-x11, pcre, pkg-config, cmake }:
 
 stdenv.mkDerivation rec {
   name = "touchegg";
   pname = "${name}";
   version = "2.0.8.1";
-  src = fetchurl {
-    url = "https://github.com/Hvassaa/touchegg/archive/${version}.tar.gz";
-    sha256 = "312a7eacf60e6aa25d900aa95593bcc7981142cebbe12919328f6e0f228702d1";
+  src = fetchFromGitHub {
+    owner = "JoseExposito";
+    repo = "${name}";
+    rev = "f6c64bbd6d00564a980bf4379dcc1178de294c85";
+    sha256 = "1v1sskyxmvbc6j4l31zbabiklfmy2pm77bn0z0baj1dl3wy7xcj2";
   };
 
   PKG_CONFIG_SYSTEMD_SYSTEMDSYSTEMUNITDIR = "${placeholder "out"}/lib/systemd/system";
 
-  nativeBuildInputs = [ 
-    gcc 
-    pkg-config
-    gdb
-    cmake
+  buildInputs = with pkgs; [
     systemd
     libinput
     pugixml
@@ -31,6 +30,7 @@ stdenv.mkDerivation rec {
     xorg.libxcb
     gtk3-x11
     pcre
-    mount
   ];
+
+  nativeBuildInputs = [ pkg-config cmake ];
  }

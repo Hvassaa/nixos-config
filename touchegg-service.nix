@@ -4,7 +4,7 @@ with lib;
 
 let 
   cfg = config.services.touchegg;
-  touchegg = import ./touchegg.nix pkgs;
+  touchegg = pkgs.callPackage ./touchegg.nix {};
 in {
   options.services.touchegg = {
     enable = mkEnableOption "Whether to enable touchegg.";
