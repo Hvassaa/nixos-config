@@ -1,12 +1,9 @@
-# with (import <nixpkgs> {});
-# pkgs:
-# with pkgs;
-{ pkgs, stdenv, fetchFromGitHub, systemd, libinput, pugixml, cairo, xorg, gtk3-x11, pcre, pkg-config, cmake }:
+{ stdenv, fetchFromGitHub, systemd, libinput, pugixml, cairo, xorg, gtk3-x11, pcre, pkg-config, cmake }:
 
 stdenv.mkDerivation rec {
   name = "touchegg";
   pname = "${name}";
-  version = "2.0.8.1";
+  version = "2.0.8";
   src = fetchFromGitHub {
     owner = "JoseExposito";
     repo = "${name}";
@@ -16,7 +13,7 @@ stdenv.mkDerivation rec {
 
   PKG_CONFIG_SYSTEMD_SYSTEMDSYSTEMUNITDIR = "${placeholder "out"}/lib/systemd/system";
 
-  buildInputs = with pkgs; [
+  buildInputs = [
     systemd
     libinput
     pugixml
@@ -33,4 +30,11 @@ stdenv.mkDerivation rec {
   ];
 
   nativeBuildInputs = [ pkg-config cmake ];
+
+  meta = with stdenv.lib; {
+    homepage = "https://github.com/JoseExposito/touchegg";
+    description = "Linux multi-touch gesture recognizer";
+    license = licenses.gpl3;
+    platforms = stdenv.lib.platforms.linux;
+  };
  }

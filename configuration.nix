@@ -7,8 +7,6 @@
 let
   nvidia-offload = import ./nvidia-offload.nix pkgs;
   python-package = import ./custom-python.nix pkgs;
-  # TODO
-  # touchegg_package = import ./touchegg.nix pkgs;
 in
 {
   imports =
@@ -17,6 +15,7 @@ in
       # TODO
       ./touchegg-service.nix
     ];
+  services.touchegg.enable = true;
 
   # TODO try to get this included in upstream nixpks!!!
   # override nixpkgs with up-to-date touchegg
@@ -26,7 +25,6 @@ in
   #   };
   # (TODO) enable the customized service
   # };
-  services.touchegg.enable = true;
 
   # enable non-free software
   nixpkgs.config.allowUnfree = true;
@@ -129,9 +127,10 @@ in
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.rasmus = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "video" "input" ]; 
+    extraGroups = [ "wheel" "networkmanager" "video" "adbusers"]; 
     shell = pkgs.fish;
   };
+  # use fish shell
   programs.fish = {
     enable = true;
     interactiveShellInit = ''
@@ -140,6 +139,8 @@ in
       set fish_cursor_insert line
     '';
   };
+  # enable adb (for android) 
+  programs.adb.enable = true;
 
 
   environment.variables = {
@@ -166,11 +167,8 @@ in
     # programming
     python-package
     go
-    # gcc
-    # rustc
-    # cargo
-    # rust-analyzer
-    # rustfmt
+    flutter
+    android-studio
     
     # productive stuff
     texlive.combined.scheme-full

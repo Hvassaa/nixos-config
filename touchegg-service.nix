@@ -23,6 +23,10 @@ in {
         RestartSec = "5s";
       };
     };
-    environment.systemPackages = [ touchegg ];
+  environment.systemPackages = [ touchegg ];
+
+  # config = mkIf cfg.enable {
+  #   # environment.systemPackages = [ touchegg ];
+  #   systemd.packages = [ touchegg ];
   };
 }
