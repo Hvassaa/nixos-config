@@ -18,5 +18,7 @@ in
     auctex
     web-mode
     nix-mode
+    selectrum
+    marginalia
     (aspellWithDicts (d: [d.en]))
   ])))

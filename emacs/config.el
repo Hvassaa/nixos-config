@@ -31,7 +31,13 @@
 
 ;;; Package that shows command-completions
 (use-package which-key
-  :config (which-key-mode))
+  :init (which-key-mode))
+
+(use-package selectrum
+  :init (selectrum-mode))
+
+(use-package marginalia
+  :init (marginalia-mode))
 
 (use-package nix-mode
   :mode ("\\.nix\\'" "\\.nix.in\\'"))
