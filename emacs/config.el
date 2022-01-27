@@ -84,6 +84,11 @@
 (use-package lsp-ui
   :commands lsp-ui-mode)
 
+(use-package lsp-pyright
+  :hook (python-mode . (lambda ()
+                          (require 'lsp-pyright)
+                          (lsp-deferred))))
+
 ;;; LSP Optimizations
 (setq gc-cons-threshold 100000000)
 (setq read-process-output-max (* 1024 1024)) ;; 1mb

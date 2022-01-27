@@ -4,7 +4,7 @@ let
   config = (builtins.readFile ./config.el);
   default = writeText "default.el" config;
 in
-  (emacs.pkgs.withPackages (epkgs: (with epkgs.melpaStablePackages; [
+  (emacs.pkgs.withPackages (epkgs: (with epkgs.melpaPackages; [
     (runCommand "default.el" {} ''
       mkdir -p $out/share/emacs/site-lisp
       cp ${default} $out/share/emacs/site-lisp/default.el
@@ -20,5 +20,8 @@ in
     nix-mode
     selectrum
     marginalia
+    lsp-pyright
+    
     (aspellWithDicts (d: [d.en]))
+
   ])))

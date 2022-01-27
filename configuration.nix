@@ -6,6 +6,7 @@
 let
   nvidia-offload = import ./nvidia-offload.nix pkgs;
   myEmacs = import ./emacs/myEmacs.nix pkgs;
+  myPython = import ./myPython.nix pkgs;
 in
 {
   imports =
@@ -118,6 +119,9 @@ in
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     myEmacs
+    nodejs
+    nodePackages.pyright
+    
     wget
     firefox
     discord
@@ -126,6 +130,7 @@ in
     (texlive.combine {
       inherit (texlive) scheme-full beamer;
     })
+    myPython
 
     # nvida, graphic utils
     (nvidia-offload.offload)
