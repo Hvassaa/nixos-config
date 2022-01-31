@@ -21,7 +21,9 @@ in
     selectrum
     marginalia
     lsp-pyright
-    
+
+    modus-themes
+
     (aspellWithDicts (d: [d.en]))
 
   ])))

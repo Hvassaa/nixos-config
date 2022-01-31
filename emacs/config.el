@@ -33,6 +33,12 @@
 (use-package which-key
   :init (which-key-mode))
 
+(use-package modus-themes
+  :init
+  (modus-themes-load-themes)
+  :config
+  (modus-themes-load-operandi))
+
 (use-package selectrum
   :init (selectrum-mode))
 
@@ -85,9 +91,22 @@
   :commands lsp-ui-mode)
 
 (use-package lsp-pyright
+  :custom (lsp-pyright-disable-organize-imports nil)
   :hook (python-mode . (lambda ()
                           (require 'lsp-pyright)
-                          (lsp-deferred))))
+                          (lsp-deferred)))
+  :config (defun python-run-clipboard ()
+	    (interactive)
+	    (progn
+	      (setq old-buffer (buffer-name))
+	      (python-shell-send-buffer)
+	      (switch-to-buffer-other-window "*Python*")
+	      (end-of-buffer)
+	      (yank)
+	      (comint-send-input)
+	      (switch-to-buffer-other-window old-buffer)
+	      ))
+  :bind (:map python-mode-map ("C-c c" . python-run-clipboard)))
 
 ;;; LSP Optimizations
 (setq gc-cons-threshold 100000000)
