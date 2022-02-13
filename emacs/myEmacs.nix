@@ -13,14 +13,17 @@ in
     which-key
     company
     flycheck
-    lsp-mode
-    lsp-ui
-    auctex
-    web-mode
-    nix-mode
     selectrum
     marginalia
+
+    lsp-mode
+    lsp-ui
     lsp-pyright
+    web-mode
+    nix-mode
+    rust-mode
+    # rustic
+    auctex
 
     modus-themes
 

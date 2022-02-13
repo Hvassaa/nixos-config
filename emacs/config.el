@@ -20,6 +20,12 @@
 (add-hook 'text-mode-hook 'flyspell-mode)
 ;; wrap lines
 (add-hook 'text-mode-hook 'auto-fill-mode)
+;; nicer mouse scrolling
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1)))
+(setq mouse-wheel-progressive-speed nil)
+(setq mouse-wheel-follow-mouse 't)
+;; maximize emacs when started
+(add-hook 'window-setup-hook 'toggle-frame-maximized t)
 
 ;;;;;;package manager config;;;;;
 ;; managed by nix
@@ -33,6 +39,14 @@
 (use-package which-key
   :init (which-key-mode))
 
+;;; dired customization
+(use-package dired
+  :hook (dired-mode . dired-hide-details-mode)
+  :custom
+  (dired-hide-details-hide-symlink-targets nil)
+  (dired-listing-switches "-al --group-directories-first"))
+
+;;; themes
 (use-package modus-themes
   :init
   (modus-themes-load-themes)
@@ -84,6 +98,8 @@
 	 (javascript-mode . lsp)
 	 (typescript-mode . lsp)
 	 (web-mode . lsp)
+	 (nix-mode . lsp)
+	 (rust-mode . lsp)
          (lsp-mode . lsp-enable-which-key-integration))
   :commands (lsp lsp-deffered))
 
@@ -131,8 +147,17 @@
 (use-package org-mode
   ; Pretty indentation  
   :hook (org-mode . org-indent-mode)
+  :init
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)))
   :custom 
 	   ; HTML export: control image width
 	   (org-mode-html-head "<style type='text/css'>img{ max-width:90%; margin:auto; }</style>")
 	   ; show \alpha as the real symbol etc
-	   (org-pretty-entities t))
+	   (org-pretty-entities t)
+	   (org-confirm-babel-evaluate nil))
+
+(use-package rust-mode;rustic
+  :config (setq rust-format-on-save t))
+ ; :config (setq rustic-format-on-save t))

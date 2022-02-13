@@ -40,7 +40,6 @@ in
   };
   # enable nvidia
   # https://github.com/NixOS/nixpkgs/issues/90152
-  # 
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia = {
     nvidiaPersistenced = true;
@@ -79,7 +78,7 @@ in
     supportedLocales = [ "en_US.UTF-8/UTF-8" "da_DK.UTF-8/UTF-8" ];
   };
   console = {
-    font = ""; # "Lat2-Terminus16";
+    font = ""; # "2-Terminus16";
     keyMap = "dk";
   };
 
@@ -113,24 +112,28 @@ in
     extraGroups = [ "wheel" "networkmanager" "video" ];
   };
 
-
-
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     myEmacs
     nodejs
     nodePackages.pyright
-    
+    rnix-lsp
+    rust-analyzer
+    rustfmt
+    gcc
+
+    myPython
+    cargo
+    rustc
+
     wget
     firefox
     discord
     zoom-us
-    #texlive.combined.scheme-full
     (texlive.combine {
-      inherit (texlive) scheme-full beamer;
+      inherit (texlive) scheme-full beamer listings;
     })
-    myPython
 
     # nvida, graphic utils
     (nvidia-offload.offload)
@@ -142,14 +145,7 @@ in
     printing.enable = true;
     thermald.enable = true;
     fstrim.enable = true;
-#    tlp = {
-#      enable = true;
-#      settings = {
-#        RUNTIME_PM_DRIVER_BLACKLIST = "nouveau mei_me";
-#        RUNTIME_PM_ON_AC = "auto";	
-#	RUNTIME_PM_ON_BAT= "auto";
-#      };
-#    };
+    flatpak.enable = true;
   };
   programs = {
     git.enable = true;
