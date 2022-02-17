@@ -3,7 +3,7 @@ with pkgs;
 let
   config = (builtins.readFile ./config.el);
   default = writeText "default.el" config;
-  packages = (with emacsPackages.melpaPackages; [
+  packages = (with emacsPackages.melpaPackages; [ # Search with "nix repl '<nixpkgs>'" and tab complete emacsPackages.melpaPackages.<package name>
     use-package
     flycheck
     lsp-mode
@@ -14,7 +14,7 @@ let
     rust-mode
     go-mode
     (aspellWithDicts (d: [d.en]))    
-  ] ++ ( with emacsPackages.elpaPackages; [
+  ] ++ ( with emacsPackages.elpaPackages; [ # Search with "nix repl '<nixpkgs>'" and tab complete emacsPackages.elpaPackages.<package name>
     vertico
     orderless
     marginalia    
