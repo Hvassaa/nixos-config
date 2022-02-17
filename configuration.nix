@@ -122,6 +122,8 @@ in
     rust-analyzer
     rustfmt
     gcc
+    go
+    gopls
 
     myPython
     cargo

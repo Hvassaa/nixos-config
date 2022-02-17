@@ -34,6 +34,7 @@
 (eval-when-compile
   (require 'use-package))
 (setq use-package-always-ensure nil)
+;(setq package-archives nil)
 
 ;;; Package that shows command-completions
 (use-package which-key
@@ -53,8 +54,17 @@
   :config
   (modus-themes-load-operandi))
 
-(use-package selectrum
-  :init (selectrum-mode))
+;; (use-package selectrum
+;;   :init (selectrum-mode))
+
+(use-package vertico
+  :init (vertico-mode))
+
+(use-package orderless
+  :init
+  (setq completion-styles '(orderless)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))))
 
 (use-package marginalia
   :init (marginalia-mode))
@@ -100,6 +110,7 @@
 	 (web-mode . lsp)
 	 (nix-mode . lsp)
 	 (rust-mode . lsp)
+	 (go-mode . lsp)
          (lsp-mode . lsp-enable-which-key-integration))
   :commands (lsp lsp-deffered))
 
@@ -130,18 +141,18 @@
 (setq lsp-log-io nil) ; if set to true can cause a performance hit
 
 ;;; LaTeX ;;;
-(use-package latex
-  :defer t
+(use-package LaTeX-mode ;latex
   :hook (LaTeX-mode . reftex-mode) ; C-c = ...
-  :config
-  ; standard stuff
-  (setq TeX-save-query nil)
-  (setq TeX-parse-self t)
-  (setq TeX-auto-save t)
+  :ensure auctex
+  :custom
+  (TeX-master nil)
+  (TeX-save-query nil)
+  (TeX-parse-self t)
+  (TeX-auto-save t)
   ; use reftex with auctex
-  (setq reftex-plug-into-AUCTeX t)
-  (setq reftex-toc-split-windows-horizontally t)
-  (setq reftex-toc-split-windows-horizontally-fraction 0.3))
+  (reftex-plug-into-AUCTeX t)
+  (reftex-toc-split-windows-horizontally t)
+  (reftex-toc-split-windows-horizontally-fraction 0.3))
 
 ;;; Org-mode ;;;
 (use-package org-mode
@@ -158,6 +169,8 @@
 	   (org-pretty-entities t)
 	   (org-confirm-babel-evaluate nil))
 
-(use-package rust-mode;rustic
+(use-package rust-mode
   :config (setq rust-format-on-save t))
- ; :config (setq rustic-format-on-save t))
+
+(use-package go-mode
+  :custom (tab-width 4))
