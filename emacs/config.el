@@ -34,7 +34,7 @@
 (eval-when-compile
   (require 'use-package))
 (setq use-package-always-ensure nil)
-;(setq package-archives nil)
+(setq package-archives nil)
 
 ;;; Package that shows command-completions
 (use-package which-key
@@ -53,9 +53,6 @@
   (modus-themes-load-themes)
   :config
   (modus-themes-load-operandi))
-
-;; (use-package selectrum
-;;   :init (selectrum-mode))
 
 (use-package vertico
   :init (vertico-mode))
@@ -143,7 +140,6 @@
 ;;; LaTeX ;;;
 (use-package LaTeX-mode ;latex
   :hook (LaTeX-mode . reftex-mode) ; C-c = ...
-  :ensure auctex
   :custom
   (TeX-master nil)
   (TeX-save-query nil)
