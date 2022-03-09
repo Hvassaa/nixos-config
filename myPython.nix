@@ -8,7 +8,7 @@ pkgs:
       pandas
       seaborn
       scikit-learn
-      # jupyter_core
+      jupyter
       # ipykernel
       # ipython      
     ];
