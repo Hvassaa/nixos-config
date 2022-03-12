@@ -1,17 +1,23 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
+# Edit this configuration file to define what should be installed on your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, ... }:
 let
   nvidia-offload = import ./nvidia-offload.nix pkgs;
-  myEmacs = import ./emacs/myEmacs.nix pkgs;
   myPython = import ./myPython.nix pkgs;
 in
 {
+
+  nixpkgs.overlays = [
+    (import (builtins.fetchTarball {
+      url = https://github.com/nix-community/neovim-nightly-overlay/archive/master.tar.gz;
+    }))
+  ];
+
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./cachix.nix
     ];
 
   # enable non-free software
@@ -125,6 +131,8 @@ in
     go
     gopls
 
+    cachix
+
     myPython
     cargo
     rustc
@@ -143,7 +151,7 @@ in
   ];
 
   services = {
-    emacs.defaultEditor = true;
+    #emacs.defaultEditor = true;
     printing.enable = true;
     thermald.enable = true;
     fstrim.enable = true;
@@ -151,6 +159,14 @@ in
   };
   programs = {
     git.enable = true;
+    neovim = {
+      enable = true;
+      defaultEditor = true;
+      package = pkgs.neovim-nightly;
+      configure = {
+        customRC = (builtins.readFile ./init.vim);
+      };
+    };
   };
 
   # Some programs need SUID wrappers, can be configured further or are
