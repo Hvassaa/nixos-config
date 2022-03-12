@@ -121,7 +121,6 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    myEmacs
     nodejs
     nodePackages.pyright
     rnix-lsp
@@ -168,6 +167,8 @@ in
       };
     };
   };
+
+  environment.etc."inputrc".text = (builtins.readFile ./inputrc);
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
