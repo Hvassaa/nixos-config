@@ -9,6 +9,7 @@ pkgs:
       seaborn
       scikit-learn
       jupyter
+      jupyterlab
       # ipykernel
       # ipython      
     ];

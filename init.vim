@@ -8,7 +8,13 @@ set splitright
 set splitbelow
 set mouse=n
 set nowrap
+set signcolumn=yes
 set clipboard=unnamedplus
+set laststatus=3
+filetype plugin indent on
+set tabstop=4
+set shiftwidth=4
+highlight WinSeparator guibg=None
 autocmd CompleteDone * pclose
 map <F8> :setlocal spell! spelllang=en_gb<CR>
 
@@ -26,9 +32,16 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'LnL7/vim-nix'
 call plug#end()
 
-" LSP setup
-lua require('lspconfig').pyright.setup{}
-lua require('lspconfig').rnix.setup{}
+lua << EOF
+local on_attach = function(client, bufnr)
+  -- Enable completion triggered by <c-x><c-o>
+  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+end
+require('lspconfig').pyright.setup{ on_attach = on_attach }
+require('lspconfig').rnix.setup{ on_attach = on_attach }
+require('lspconfig').vimls.setup{ on_attach = on_attach }
+require('lspconfig').clangd.setup{ on_attach = on_attach }
+EOF
 
 " LaTeX/vimtex settings 
 let g:vimtex_complete_enabled = 1

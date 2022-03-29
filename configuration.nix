@@ -121,24 +121,33 @@ in
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-    nodejs
-    nodePackages.pyright
-    rnix-lsp
-    rust-analyzer
-    rustfmt
+    # langs
     gcc
-    go
-    gopls
-
-    cachix
-
+    gnumake
     myPython
+    nodejs
+    go
     cargo
     rustc
 
-    wget
+    # lsp/formatters/tools
+    clang-tools
+    bear
+    nodePackages.pyright
+    nodePackages.vim-language-server
+    rnix-lsp
+    gopls
+    rust-analyzer
+    rustfmt
+
+    # cachix for nix-community
+    cachix
+
+    # misc.
     firefox
     discord
+
+    # university stuff
     zoom-us
     (texlive.combine {
       inherit (texlive) scheme-full beamer listings;
@@ -165,6 +174,8 @@ in
       configure = {
         customRC = (builtins.readFile ./init.vim);
       };
+      viAlias = true;
+      vimAlias = true;
     };
   };
 
