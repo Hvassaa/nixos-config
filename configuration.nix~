@@ -75,19 +75,6 @@ in
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
       emacs
-      nodePackages_latest.pyright
-      rust-analyzer
-
-      # prog.
-      rust
-      cargo
-      clisp
-      (python3.withPackages; (python-packages: with python-packages; [
-          pandas
-          requests
-      ]));i
-
-      
       firefox
       nvidia-offload
     ];
