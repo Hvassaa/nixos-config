@@ -15,12 +15,15 @@ let
 in
 {
   imports =
-    [ ./hardware-configuration.nix ];
+    [ # Include the results of the hardware scan.
+      ./hardware-configuration.nix
+    ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
+  boot.blacklistedKernelModules =  [ "nouveau" ];
   boot.supportedFilesystems = [ "ntfs" ];
 
   networking.hostName = "nixos"; # Define your hostname.
@@ -32,10 +35,18 @@ in
   time.timeZone = "Europe/Copenhagen";
 
   # Select internationalisation properties.
-  # i18n.defaultLocale = "en_DK.utf8";
-  i18n = {
-    defaultLocale = "en_US.UTF-8"; # seems important for emacs
-    supportedLocales = [ "en_US.UTF-8/UTF-8" "da_DK.UTF-8/UTF-8" ];
+  i18n.defaultLocale = "en_DK.UTF-8";
+
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "da_DK.UTF-8";
+    LC_IDENTIFICATION = "da_DK.UTF-8";
+    LC_MEASUREMENT = "da_DK.UTF-8";
+    LC_MONETARY = "da_DK.UTF-8";
+    LC_NAME = "da_DK.UTF-8";
+    LC_NUMERIC = "da_DK.UTF-8";
+    LC_PAPER = "da_DK.UTF-8";
+    LC_TELEPHONE = "da_DK.UTF-8";
+    LC_TIME = "da_DK.UTF-8";
   };
 
   # Enable the X11 windowing system.
@@ -66,30 +77,21 @@ in
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-
   };
 
+  # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.rasmus = {
     isNormalUser = true;
     description = "Rasmus Tomtava Bjerg";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
-      emacs
-      nodePackages_latest.pyright
-      rust-analyzer
-
-      # prog.
-      rust
-      cargo
-      clisp
-      (python3.withPackages; (python-packages: with python-packages; [
-          pandas
-          requests
-      ]));i
-
-      
       firefox
+      emacs-gtk
+      discord
       nvidia-offload
+
+      python3
+      nodePackages.pyright
     ];
   };
   services.emacs.defaultEditor = true;
@@ -97,17 +99,10 @@ in
     git.enable = true;
     steam.enable = true;
   };
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  environment.systemPackages = with pkgs; [
-  ];
   environment.sessionVariables = {
     MOZ_ENABLE_WAYLAND = "1";
     MOZ_USE_XINPUT2 = "1";
   };
-
   hardware.nvidia = {
     prime = {
       offload.enable = true;
@@ -124,7 +119,10 @@ in
   hardware.enableRedistributableFirmware = true;
   hardware.cpu.intel.updateMicrocode = true;
 
+  # Allow unfree packages
+  nixpkgs.config.allowUnfree = true;
+  environment.systemPackages = with pkgs; [
+  ];
 
-
-  system.stateVersion = "22.05";
+  system.stateVersion = "22.11"; # Did you read the comment?
 }
