@@ -1,17 +1,11 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { config, pkgs, ... }:
 
-let
-  nvidia-offload = pkgs.writeShellScriptBin "nvidia-offload" ''
-    export __NV_PRIME_RENDER_OFFLOAD=1
-    export __NV_PRIME_RENDER_OFFLOAD_PROVIDER=NVIDIA-G0
-    export __GLX_VENDOR_LIBRARY_NAME=nvidia
-    export __VK_LAYER_NV_optimus=NVIDIA_only
-    exec "$@"
-  '';
+let 
+  nvstat = pkgs.writeShellScriptBin "nvstat" ''
+      state="$(cat /sys/bus/pci/devices/0000:01:00.0/power/runtime_status)"
+      echo "GPU state: $state"
+      cat /proc/driver/nvidia/gpus/*/power
+    '';
 in
 {
   imports =
@@ -22,8 +16,6 @@ in
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.efiSysMountPoint = "/boot/efi";
-  boot.blacklistedKernelModules =  [ "nouveau" ];
   boot.supportedFilesystems = [ "ntfs" ];
 
   networking.hostName = "nixos"; # Define your hostname.
@@ -79,50 +71,72 @@ in
     pulse.enable = true;
   };
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
+
   users.users.rasmus = {
     isNormalUser = true;
     description = "Rasmus Tomtava Bjerg";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
       firefox
-      emacs-gtk
+      neovim
       discord
-      nvidia-offload
 
-      python3
-      nodePackages.pyright
+      nvstat
+
+      ntfs3g
     ];
   };
-  services.emacs.defaultEditor = true;
+  
   programs = {
     git.enable = true;
     steam.enable = true;
   };
-  environment.sessionVariables = {
-    MOZ_ENABLE_WAYLAND = "1";
-    MOZ_USE_XINPUT2 = "1";
+
+  environment.etc."inputrc".text = ''
+    set editing-mode vi
+    set show-mode-in-prompt on
+    $if term=linux
+    set vi-ins-mode-string \1\e[?0c\2
+    set vi-cmd-mode-string \1\e[?8c\2
+    $else
+    set vi-ins-mode-string \1\e[6 q\2
+    set vi-cmd-mode-string \1\e[2 q\2
+    $endif
+    
+    set keymap vi-command
+    Control-l: clear-screen
+    set keymap vi-insert
+    Control-l: clear-screen
+  '';
+
+  environment.systemPackages = with pkgs; [];
+
+  nixpkgs.config.allowUnfree = true;
+
+  services.xserver.videoDrivers = [ "nvidia" ];
+  hardware.enableRedistributableFirmware = true;
+  hardware.cpu.intel.updateMicrocode = true;	
+  hardware.opengl = {
+    enable = true;
+    driSupport = true;
+    driSupport32Bit = true;
   };
   hardware.nvidia = {
     prime = {
-      offload.enable = true;
+      offload = {
+        enable = true;
+	enableOffloadCmd = true;
+      };
       intelBusId = "PCI:0:2:0";
       nvidiaBusId = "PCI:1:0:0";
     };
     nvidiaPersistenced = true;
+    # modesetting.enable = true;
     modesetting.enable = true;
     powerManagement.enable = true;
     powerManagement.finegrained = true;        
   };
-  services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.opengl.enable = true;
-  hardware.enableRedistributableFirmware = true;
-  hardware.cpu.intel.updateMicrocode = true;
 
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
-  environment.systemPackages = with pkgs; [
-  ];
+  system.stateVersion = "23.05"; # Did you read the comment?
 
-  system.stateVersion = "22.11"; # Did you read the comment?
 }
